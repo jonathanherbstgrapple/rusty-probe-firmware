@@ -124,9 +124,13 @@ pub fn setup(
 
     let pwm = pwm_slices.pwm2;
 
-    let mut translator_power = TranslatorPower::new(pins.gpio5.into_push_pull_output(), pwm);
+    let mut translator_power = TranslatorPower::new(
+        pins.gpio7.into_push_pull_output(),
+        pins.gpio5.into_push_pull_output(),
+        pwm);
 
     translator_power.set_translator_vcc(1800);
+    translator_power.enable_tranlator_vcc();
 
     ///////////////////////////////////
     // Target power
@@ -137,7 +141,7 @@ pub fn setup(
 
     let mut target_power = TargetPower::new(
         pins.gpio3.into_push_pull_output(),
-        pins.gpio7.into_push_pull_output(),
+        pins.gpio4.into_push_pull_output(),
         pins.gpio6.into_push_pull_output(),
         pins.gpio0.into_push_pull_output(),
         pwm,
@@ -244,14 +248,18 @@ impl TargetVccReader {
 }
 
 pub struct TranslatorPower {
+    enable_vtranslator: Pin<Gpio7, PushPullOutput>,
     vtranslator_pwm: Slice<Pwm2, FreeRunning>,
 }
 
 impl TranslatorPower {
     pub fn new(
+        mut enable_vtranslator: Pin<Gpio7, PushPullOutput>,
         mut vtranslator_pin: Pin<Gpio5, PushPullOutput>,
         mut vtranslator_pwm: Slice<Pwm2, FreeRunning>,
     ) -> Self {
+        enable_vtranslator.set_low().ok();
+
         vtranslator_pwm.clr_ph_correct();
         vtranslator_pwm.set_top(4095);
         vtranslator_pwm.enable();
@@ -264,7 +272,14 @@ impl TranslatorPower {
         channel.output_to(vtranslator_pin);
         channel.set_duty(1023);
 
-        Self { vtranslator_pwm }
+        Self {
+            enable_vtranslator,
+            vtranslator_pwm
+        }
+    }
+
+    pub fn enable_tranlator_vcc(&mut self) {
+        self.enable_vtranslator.set_high().ok();
     }
 
     pub fn set_translator_vcc(&mut self, mv: u32) {
@@ -306,7 +321,7 @@ impl TargetPower {
 
     pub fn new(
         mut enable_5v_key: Pin<Gpio3, PushPullOutput>,
-        mut enable_5v: Pin<Gpio7, PushPullOutput>,
+        mut enable_5v: Pin<Gpio4, PushPullOutput>,
         mut enable_vtgt: Pin<Gpio6, PushPullOutput>,
         mut vtgt_pin: Pin<Gpio0, PushPullOutput>,
         mut vtgt_pwm: Slice<Pwm0, FreeRunning>,
