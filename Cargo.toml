@@ -32,7 +32,7 @@ defmt-brtt = { version = "0.1.0", default-features = false }
 bbqueue = { version = "0.5", features = ["thumbv6"], optional = true }
 
 [features]
-default = [ "defmt-brtt/rtt", "gnddetect" ]
+default = [ "defmt-brtt/rtt" ]
 defmt-bbq = ["defmt-brtt/bbq", "dep:bbqueue"]
 gnddetect = []
 usb-serial-reboot = []
