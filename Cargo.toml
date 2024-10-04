@@ -33,7 +33,7 @@ bbqueue = { version = "0.5", features = ["thumbv6"] }
 
 [features]
 default = [ "defmt-brtt/rtt" ]
-defmt-bbq = ["defmt-brtt/bbq", "dep:bbqueue"]
+defmt-bbq = ["defmt-brtt/bbq"]
 gnddetect = []
 usb-serial-reboot = []
 
