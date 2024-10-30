@@ -17,7 +17,7 @@ DEFMT_LOG=off cargo build --release --bin app
 elf2uf2-rs target/thumbv6m-none-eabi/release/app app
 ```
 
-Start the Pico in bootloader mode and drop the `app.uf2` file to it, done! 
+Start the RP2040 in bootloader mode and drop the `app.uf2` file to it, done! 
 
 ## Running with `defmt` logs without debugger
 
@@ -40,12 +40,9 @@ You can now repeat the above command, which will automatically restart and flash
 
 You may have to change `XTASK_SERIAL`, and on non-x86 linux platforms, you must update the runner configuration with the correct target (see [`.cargo/config.toml`](.cargo/config.toml#L15)).
 
-## TODO
+## Feature TODO list
 
-- [x] Move SWD impl to PIO
-- [ ] Add support for SWO (Manchester encoding or UART via PIO)
+- [ ] Add support for JTAG (only SWD works right now)
+- [ ] Add support for SWO
 - [ ] Add support for VCP (it enumerates now, but ignores all data)
-- [ ] Add the automatic polling of RTT buffers
-- [ ] Document the `dap-rs` traits and helpers
-- [ ] Document the firmware
 
